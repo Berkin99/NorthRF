@@ -23,11 +23,20 @@
 #include <system.h>
 #include <systime.h>
 #include <sysconfig.h>
+#include "RF24.h"
 
-#define LED_SYS		LED_1
-#define LED_ERR		LED_1
+
+static int anan = 0;
 
 void systemLaunch(void){
+
+	RF24_Init(&RF24_SPI, RF24_CE_GPIO, RF24_CE, RF24_CS_GPIO, RF24_CS);
+	anan = RF24_begin();
+
+	while(1){
+		HAL_GPIO_TogglePin(LED_2_GPIO_Port, LED_2_Pin);
+		delay(1000);
+	}
 
 //  /* FreeRTOS Confiured Hardware Abstraction
 //   * Layer Initialize.

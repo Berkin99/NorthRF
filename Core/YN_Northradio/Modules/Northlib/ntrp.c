@@ -25,6 +25,25 @@
 #include <stdint.h>
 
 
+NTRP_Message_t NTRP_NewMessage(void){
+	NTRP_Message_t message;
+	message.talkerID = 0;
+	message.receiverID = 0;
+	message.packetsize = 0;
+	message.packet = NTRP_NewPacket();
+	return message;
+}
+
+NTRP_Packet_t  NTRP_NewPacket(void){
+	NTRP_Packet_t packet;
+	packet.header = 0;
+	packet.dataID = 0;
+	for(uint8_t i = 0; i<26;i++){
+		packet.data.bytes[i] = 0;
+	}
+	return packet;
+}
+
 uint8_t NTRP_Parse(NTRP_Message_t* ref, const uint8_t* raw_sentence){
 	if(raw_sentence[0]!=NTRP_STARTBYTE) return 0;
 	ref->talkerID    = raw_sentence[1];

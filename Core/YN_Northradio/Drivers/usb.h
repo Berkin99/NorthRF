@@ -20,31 +20,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <system.h>
-#include <sysconfig.h>
-#include <systime.h>
+
+#ifndef USB_H_
+#define USB_H_
 
 
-#ifndef SYSTIME
-#error "/SYSTEM> SYSTIME Timer should be defined !!! How to define->(syscheck md.3)"
-#else
 
-uint32_t millis(void){
-	return SYSTIME.Instance->CNT/1000;
-}
-
-uint32_t micros(void){
-	return SYSTIME.Instance->CNT;
-}
-
-void delay(uint32_t ms){
-	uint32_t dt = millis() + ms;
-	while (millis() < dt);
-}
-
-void delayMicroseconds(uint32_t us){
-	uint32_t dt = micros() + us;
-	while (micros() < dt);
-}
-
-#endif
+#endif /* USB_H_ */

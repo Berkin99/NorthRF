@@ -29,7 +29,6 @@
 
 extern SPI_HandleTypeDef hspi1;
 extern TIM_HandleTypeDef htim2;
-extern PCD_HandleTypeDef hpcd_USB_FS;
 
 void systemLaunch(void);
 void systemTask(void);

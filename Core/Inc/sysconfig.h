@@ -42,19 +42,12 @@
 
 /// SPI /////////////////////////////////////////////////////
 #define RF24_SPI			hspi1
-#define RF24_CE_GPIO		USART1_M0_GPIO_Port
-#define RF24_CS_GPIO		USART1_M1_GPIO_Port
-#define RF24_CE				USART1_M0_Pin
-#define RF24_CS				USART1_M1_Pin
+#define RF24_CE_GPIO		NRF_CE_GPIO_Port
+#define RF24_CS_GPIO		NRF_CS_GPIO_Port
+#define RF24_CE				NRF_CE_Pin
+#define RF24_CS				NRF_CS_Pin
 #define RF24_RX_ADDRESS		{0xE7,0xE7,0xE7,0xE3,0x00}
 #define RF24_TX_ADDRESS		{0xE7,0xE7,0xE7,0xE3,0x01}
-/////////////////////////////////////////////////////////////
-
-/// NCOM ////////////////////////////////////////////////////
-#define NC_MODULE 				"RF24"
-#define NC_NTRPPACKET
-//#define NC_NTRPMESSAGE
-//#define NC_ID 				'X'
 /////////////////////////////////////////////////////////////
 
 #endif /* SYSCONFIG_H_ */

@@ -55,9 +55,9 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern PCD_HandleTypeDef hpcd_USB_FS;
 extern SPI_HandleTypeDef hspi1;
 extern TIM_HandleTypeDef htim2;
-extern PCD_HandleTypeDef hpcd_USB_FS;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */

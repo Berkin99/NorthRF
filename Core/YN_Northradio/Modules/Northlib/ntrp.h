@@ -72,6 +72,9 @@ typedef struct{
 	NTRP_Packet_t packet;
 }NTRP_Message_t;
 
+NTRP_Message_t NTRP_NewMessage(void);
+NTRP_Packet_t  NTRP_NewPacket(void);
+
 uint8_t NTRP_Parse(NTRP_Message_t* ref, const uint8_t* raw_sentence);
 uint8_t NTRP_PackParse(NTRP_Packet_t* ref, const uint8_t* raw_packet);
 
