@@ -4,9 +4,9 @@
  *     \  // _/ /    /_/ / / __ | \  /
  *     /_//___//_/|_//___//_/ |_| /_/
  *
- *    Yeniay Control Computer Firmware
+ *      Yeniay Northstar RF Firmware
  *
- *       Copyright (C) 2022 Yeniay
+ *       Copyright (C) 2024 Yeniay
  *
  * This  program  is  free software:   you
  * can  redistribute it  and/or  modify it
@@ -32,5 +32,6 @@ extern TIM_HandleTypeDef htim2;
 
 void systemLaunch(void);
 void systemTask(void);
+void systemErrorCall(void);
 
 #endif /* SYSTEM_H_ */

@@ -1,32 +1,35 @@
 /**
- * __  __ ____ _  __ ____ ___ __  __
- * \ \/ // __// |/ //  _// _ |\ \/ /
- *  \  // _/ /    /_/ / / __ | \  /
- *  /_//___//_/|_//___//_/ |_| /_/
+ *    __  __ ____ _  __ ____ ___ __  __
+ * 	  \ \/ // __// |/ //  _// _ |\ \/ /
+ *     \  // _/ /    /_/ / / __ | \  /
+ *     /_//___//_/|_//___//_/ |_| /_/
  *
- * Yeniay Control Computer Firmware
+ *         Yeniay System Firmware
  *
- * Copyright (C) 2022 Yeniay
+ *       Copyright (C) 2024 Yeniay
  *
- * This program is free software: you
- * can redistribute it and/or modify it
- * under the terms of the GNU General
- * Public License as published by the
+ * This  program  is  free software:   you
+ * can  redistribute it  and/or  modify it
+ * under  the  terms of  the  GNU  General
+ * Public  License as  published  by   the
  * Free Software Foundation, in version 3.
  *
- * You should have received a copy of
- * the GNU General Public License along
+ * You  should  have  received  a  copy of
+ * the  GNU  General  Public License along
  * with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 
 #ifndef NTRPROUTER_H_
 #define NTRPROUTER_H_
 
 #include "system.h"
+#include "ntrp.h"
 
 #define NRF_MAX_PIPE_SIZE   6
+
+#define NTRPR_TASK_PRI		(5)
+#define NTRPR_TASK_STACK	(4 * configMINIMAL_STACK_SIZE)
 
 typedef enum{
   R_OPENPIPE    = 21,
@@ -51,26 +54,22 @@ typedef struct{
   uint8_t rxaddress[5];
 }NTRPR_Pipe_t;
 
-
-
 void NTRPR_Init(void);
 
-uint8_t NTRPR_sync(uint32_t timeout);
-void 	NTRPR_task(void);
-void 	NTRPR_debug(const char* msg);
+uint8_t NTRPR_Sync(uint32_t timeout);
+void 	NTRPR_Debug(const char* msg);
 
-uint8_t NTRPR_receiveMaster(NTRP_Message_t* msg);
-void 	NTRPR_transmitMaster(const NTRP_Message_t* msg);
+uint8_t NTRPR_ReceiveMaster(NTRP_Message_t* msg);
+void 	NTRPR_TransmitMaster(const NTRP_Message_t* msg);
 
-uint8_t NTRPR_receivePipe(NTRP_Message_t* msg);
-uint8_t NTRPR_Router_transmitPipe( uint8_t pipeid, const NTRP_Packet_t* packet, uint8_t size);
-void 	NTRPR_transmitPipeFast( uint8_t pipeid,const uint8_t* raw_sentence, uint8_t size);
+uint8_t NTRPR_ReceivePipe(NTRP_Message_t* msg);
+uint8_t NTRPR_TransmitPipe( uint8_t pipeid, const NTRP_Packet_t* packet, uint8_t size);
+void 	NTRPR_TransmitPipeFast( uint8_t pipeid,const uint8_t* raw_sentence, uint8_t size);
 
-void 	NTRPR_route(NTRP_Message_t* msg);
-
-void    NTRPR_routerCOM(NTRP_Packet_t* packet, uint8_t size);
-uint8_t NTRPR_openPipe(NTRPR_Pipe_t cmd);
-void    NTRPR_closePipe(char id);
+void 	NTRPR_Route(NTRP_Message_t* msg);
+void 	NTRPR_RouterCOM(NTRP_Packet_t* cmd, uint8_t size);
+uint8_t NTRPR_OpenPipe(NTRPR_Pipe_t cmd);
+void    NTRPR_ClosePipe(char id);
 
 
 #endif /* NTRPROUTER_H_ */

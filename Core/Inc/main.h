@@ -42,6 +42,10 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
 
+extern SPI_HandleTypeDef hspi1;
+extern TIM_HandleTypeDef htim2;
+extern UART_HandleTypeDef huart1;
+
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -61,8 +65,6 @@ void Error_Handler(void);
 #define LED_1_GPIO_Port GPIOA
 #define LED_2_Pin GPIO_PIN_3
 #define LED_2_GPIO_Port GPIOA
-#define NRF_IRQ_Pin GPIO_PIN_15
-#define NRF_IRQ_GPIO_Port GPIOA
 #define NRF_CS_Pin GPIO_PIN_6
 #define NRF_CS_GPIO_Port GPIOB
 #define NRF_CE_Pin GPIO_PIN_7

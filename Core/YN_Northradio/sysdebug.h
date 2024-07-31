@@ -1,6 +1,6 @@
 /**
  *    __  __ ____ _  __ ____ ___ __  __
- * 	  \ \/ // __// |/ //  _// _ |\ \/ /
+ *    \ \/ // __// |/ //  _// _ |\ \/ /
  *     \  // _/ /    /_/ / / __ | \  /
  *     /_//___//_/|_//___//_/ |_| /_/
  *
@@ -20,16 +20,23 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#ifndef SYSDEBUG_H_
+#define SYSDEBUG_H_
 
-#ifndef SYSTIME_H_
-#define SYSTIME_H_
+#define SYS_TRUE    (1)
+#define SYS_FALSE   (0)
 
-#include <stdint.h>
+#define SYS_OK             (0)
+#define SYS_ERR            (-1)
 
-uint32_t millis(void);
-uint32_t micros(void);
+#define SYS_E_NULL_PTR     (-2)
+#define SYS_E_OVERWRITE    (-3)
+#define SYS_E_OVERFLOW     (-4)
+#define SYS_E_COMM_FAIL    (-5)
+#define SYS_E_CONF_FAIL    (-6)
+#define SYS_E_NOT_FOUND    (-7)
+#define SYS_E_TIMEOUT      (-8)
 
-void delay(uint32_t ms);
-void delayMicroseconds(uint32_t us);
+#define SYS_UNDEFINED		NULL
 
-#endif
+#endif /* SYSDEBUG_H_ */

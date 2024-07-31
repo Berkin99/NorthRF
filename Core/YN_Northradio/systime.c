@@ -1,6 +1,6 @@
 /**
  *    __  __ ____ _  __ ____ ___ __  __
- * 	  \ \/ // __// |/ //  _// _ |\ \/ /
+ *    \ \/ // __// |/ //  _// _ |\ \/ /
  *     \  // _/ /    /_/ / / __ | \  /
  *     /_//___//_/|_//___//_/ |_| /_/
  *
@@ -22,12 +22,16 @@
 
 #include <system.h>
 #include <sysconfig.h>
-#include <systime.h>
+#include "systime.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
 
 #ifndef SYSTIME
 #error "/SYSTEM> SYSTIME Timer should be defined !!! How to define->(syscheck md.3)"
-#else
+#endif
+
+#ifdef SYSTIME
 
 uint32_t millis(void){
 	return SYSTIME.Instance->CNT/1000;
@@ -38,8 +42,13 @@ uint32_t micros(void){
 }
 
 void delay(uint32_t ms){
+#ifdef INC_FREERTOS_H
+	/* RTOS Delay MS */
+	vTaskDelay(pdMS_TO_TICKS(ms));
+#else
 	uint32_t dt = millis() + ms;
 	while (millis() < dt);
+#endif
 }
 
 void delayMicroseconds(uint32_t us){

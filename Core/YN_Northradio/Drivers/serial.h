@@ -28,18 +28,36 @@
  * @retval 3 -> HAL_TIMEOUT
  */
 
-#ifndef SPI_H_
-#define SPI_H_
+#ifndef SERIAL_H_
+#define SERIAL_H_
 
-#include <stdint.h>
+#include <stdarg.h>
 #include "system.h"
 
-void   spiInit(void);
-int8_t spiIndex           (SPI_HandleTypeDef* hspi);
-void   spiBeginTransaction(SPI_HandleTypeDef* hspi);
-void   spiEndTransaction  (SPI_HandleTypeDef* hspi);
-int8_t spiReceive         (SPI_HandleTypeDef* hspi, uint8_t* pRxData, uint8_t len);
-int8_t spiTransmit        (SPI_HandleTypeDef* hspi, uint8_t* pTxData, uint8_t len);
-int8_t spiTransmitReceive (SPI_HandleTypeDef* hspi, uint8_t* pRxData, uint8_t* pTxData, uint8_t len);
+typedef enum {
+	BAUD_9600,
+	BAUD_19200,
+	BAUD_38400,
+	BAUD_57600,
+	BAUD_115200
+} baudRate_e;
 
-#endif /* SPI_H_ */
+static const uint32_t baudRates[] = {
+	9600,
+	19200,
+	38400,
+	57600,
+	115200
+};
+
+void     serialInit(void);
+int8_t   serialIndex(UART_HandleTypeDef* huart);
+int8_t	 serialSize(void);
+void     serialSetBaudRate(UART_HandleTypeDef* huart, baudRate_e index);
+uint32_t serialGetBaudRate(UART_HandleTypeDef* huart);
+int8_t   serialRead (UART_HandleTypeDef* huart, uint8_t* pRxData, uint16_t len);
+int8_t   serialWrite(UART_HandleTypeDef* huart, const uint8_t* pTxData, uint16_t len);
+
+void serialPrint(char* format, ...);
+
+#endif /* SERIAL_H_ */

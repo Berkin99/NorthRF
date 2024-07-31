@@ -4,7 +4,7 @@
  *     \  // _/ /    /_/ / / __ | \  /
  *     /_//___//_/|_//___//_/ |_| /_/
  *
- *         Yeniay System Firmware
+ *      Yeniay Northstar RF Firmware
  *
  *       Copyright (C) 2024 Yeniay
  *
@@ -21,15 +21,17 @@
  */
 
 
-#ifndef SYSTIME_H_
-#define SYSTIME_H_
+#ifndef SYSTEM_H_
+#define SYSTEM_H_
 
-#include <stdint.h>
+#include "main.h"
+#include "sysdebug.h"
 
-uint32_t millis(void);
-uint32_t micros(void);
+#define SYS_TASK_PRI		(2)
+#define SYS_TASK_STACK		(4 * configMINIMAL_STACK_SIZE)
 
-void delay(uint32_t ms);
-void delayMicroseconds(uint32_t us);
+void systemLaunch(void);
+void systemWaitReady(void);
+void systemErrorCall(void);
 
-#endif
+#endif /* SYSTEM_H_ */

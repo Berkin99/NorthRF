@@ -20,54 +20,44 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <system.h>
-#include <systime.h>
-#include <sysconfig.h>
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "cmsis_os.h"
+
+#include "system.h"
+#include "systime.h"
+#include "sysconfig.h"
+#include "static_mem.h"
+
 #include "spi.h"
+#include "serial.h"
+#include "usb.h"
 #include "led.h"
-#include "RF24.h"
+#include "ntrprouter.h"
 
-#define RF24_RX_ADDRESS		{0xE7,0xE7,0xE7,0xE3,0x00}
-#define RF24_TX_ADDRESS		{0xE7,0xE7,0xE7,0xE3,0x01}
+static uint8_t sysInit;
 
-static uint8_t rxaddress[] = RF24_RX_ADDRESS;
-static uint8_t txaddress[] = RF24_TX_ADDRESS;
-
-static char buffer [32];
+STATIC_MEM_TASK_ALLOC(SYS_TASK, SYS_TASK_STACK, SYS_TASK_PRI);
+void systemTask(void* argv);
 
 void systemLaunch(void){
+	if(sysInit) return;
 
-// 	usbInit();
 	spiInit();
+	serialInit();
+	usbInit();
 
-	RF24_Init(&RF24_SPI, RF24_CE_GPIO, RF24_CE, RF24_CS_GPIO, RF24_CS);
-
-
-	if(!RF24_begin())systemErrorCall();
-
-	RF24_setDataRate(RF24_2MBPS);
-
-	RF24_openWritingPipe(	txaddress); 		/*Always uses Pipe 0*/ /*301*/
-	RF24_openReadingPipe(1, rxaddress);					   	           /*300*/
-
-	RF24_startListening();
-
-	ledSet(LED_2, 1);
-
-	while(1){
-		if(RF24_available()){
-			RF24_read(buffer, 32);
-			ledToggle(LED_2);
-		}
-
-		delay(100);
-	}
-
+	STATIC_MEM_TASK_CREATE(SYS_TASK, systemTask, NULL);
+	sysInit = 1;
 }
 
-void systemTask(void){
+void systemTask(void* argv){
 
+	serialPrint("[>] System start\n");
 
+	NTRPR_Init();
+
+	serialPrint("[>] System Ready\n \n");
 }
 
 void systemErrorCall(void){
