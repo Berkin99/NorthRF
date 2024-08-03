@@ -58,6 +58,8 @@ void 	RF24_setChannel(uint8_t channel);
 void 	RF24_setPayloadSize(uint8_t size);
 uint8_t RF24_getPayloadSize(void);
 void 	RF24_setAddressWidth(uint8_t a_width);
+void	RF24_setPALevel(uint8_t level, uint8_t lnaEnable);
+uint8_t RF24_getPALevel(void);
 uint8_t RF24_available(void);
 uint8_t RF24_pipeAvailable(uint8_t* pipe_num);
 void 	RF24_setRetries(uint8_t delay, uint8_t count);

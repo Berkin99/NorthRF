@@ -28,12 +28,16 @@
 #include "semphr.h"
 #include "static_mem.h"
 #include "sysconfig.h"
+
+#ifdef NORTHROUTER
+
 #include "systime.h"
 #include "ntrprouter.h"
 #include "ntrp.h"
 #include "RF24.h"
 #include "usb.h"
 #include "serial.h"
+#include "led.h"
 
 #define SYNC_TIMEOUT     (50)     /* 50 seconds timeout */
 #define USB_LED			 LED1
@@ -50,7 +54,7 @@ static uint8_t txBuffer[NTRP_MAX_MSG_SIZE];   /* Slave Transmit buffer */
 
 static NTRPR_Mode_e mode; /* RxTx , Rx, Tx modes. Default : RxTx */
 
-static SemaphoreHandle_t radioReady;
+static SemaphoreHandle_t radioMutex;
 
 void NTRPR_UsbTask(void* argv);
 void NTRPR_RadioTask(void* argv);
@@ -69,10 +73,13 @@ void NTRPR_Init(void){
 	else {serialPrint("[-] NTRPR Radio Init ERROR!\n"); return;}
 	ledSet(RADIO_LED, 1);
 
+	RF24_setDataRate(RF24_2MBPS);
+	RF24_setPALevel(RF24_PA_MAX, 0);
+
 	if(NTRPR_Sync(SYNC_TIMEOUT))serialPrint("[+] NTRPR Sync OK\n");
 	else{ serialPrint("[-] NTRPR Sync ERROR!\n"); return;}
 
-	radioReady = xSemaphoreCreateBinary();
+	radioMutex = xSemaphoreCreateMutex();
 
 	STATIC_MEM_TASK_CREATE(NTRPR_USB, NTRPR_UsbTask, NULL);
 	STATIC_MEM_TASK_CREATE(NTRPR_RADIO, NTRPR_RadioTask, NULL);
@@ -112,12 +119,16 @@ void NTRPR_UsbTask(void* argv){
 void NTRPR_RadioTask(void* argv){
 
 	serialPrint("[+] NTRPR Radio Task Init OK\n");
+	TickType_t xLastWakeTime = xTaskGetTickCount();
+
 	while(1){
 	    NTRP_Message_t msgbuffer = NTRP_NewMessage();
-		/* Waits nrf interrupt for catch a success ntrp_message */
-	    xSemaphoreTake(radioReady, portMAX_DELAY);
-	    ledToggle(RADIO_LED);
-		if(NTRPR_ReceivePipe(&msgbuffer)) NTRPR_Route(&msgbuffer);
+		/* Retries for catch a success ntrp_message */
+		if(NTRPR_ReceivePipe(&msgbuffer)){
+		    ledToggle(RADIO_LED);
+			NTRPR_Route(&msgbuffer);
+		}
+		vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(4));
 	}
 }
 
@@ -157,6 +168,7 @@ uint8_t NTRPR_ReceivePipe(NTRP_Message_t* msg){
     if(mode == R_MODE_FULLTX) return 0;
 
     uint8_t pipe = 0;
+	if (xSemaphoreTake(radioMutex, portMAX_DELAY) != pdTRUE) return 0;
     if(RF24_pipeAvailable(&pipe)){
         RF24_read(rxBuffer, NTRP_MAX_MSG_SIZE);
 
@@ -165,14 +177,18 @@ uint8_t NTRPR_ReceivePipe(NTRP_Message_t* msg){
         msg->receiverID = NTRP_MASTER_ID;
         msg->talkerID   = nrfPipe[pipe].id;
         msg->packetsize = NTRP_MAX_PACKET_SIZE;
+        xSemaphoreGive(radioMutex);
         return 1;
     }
+    xSemaphoreGive(radioMutex);
     return 0;
 }
 
 uint8_t NTRPR_TransmitPipe(uint8_t pipeid, const NTRP_Packet_t* packet, uint8_t size){
     if(mode == R_MODE_FULLRX) return 0;
     if (pipeid == 0) return 0; /*Pipe ID needs to be an ascii char*/
+
+	if (xSemaphoreTake(radioMutex, portMAX_DELAY) != pdTRUE) return 0;
 
     for (uint8_t i = 0; i < nrfPipeIndex; i++) /* Pipe index start @1 */
     {
@@ -194,13 +210,17 @@ uint8_t NTRPR_TransmitPipe(uint8_t pipeid, const NTRP_Packet_t* packet, uint8_t 
         RF24_stopListening();
         RF24_write(txBuffer, size);
         RF24_startListening();
+        xSemaphoreGive(radioMutex);
         return 1;
     }
+    xSemaphoreGive(radioMutex);
     return 0;
 }
 
 void NTRPR_TransmitPipeFast( uint8_t pipeid, const uint8_t* raw_sentence, uint8_t size){
     if(mode == R_MODE_FULLRX) return;
+
+	if (xSemaphoreTake(radioMutex, portMAX_DELAY) != pdTRUE) return;
 
     for (uint8_t i = 0; i < nrfPipeIndex; i++)
     {
@@ -216,6 +236,7 @@ void NTRPR_TransmitPipeFast( uint8_t pipeid, const uint8_t* raw_sentence, uint8_
         RF24_write(raw_sentence, size);
         if(mode == R_MODE_TRX) RF24_startListening(); // Set to RX Mode again
     }
+    xSemaphoreGive(radioMutex);
 }
 
 void 	NTRPR_Route(NTRP_Message_t* msg){
@@ -295,14 +316,15 @@ void NTRPR_ClosePipe(char id){
 	/* Not Implemented */
 }
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-	if (GPIO_Pin == GPIO_PIN_15) {
-		portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
-
-		xSemaphoreGiveFromISR(radioReady, &xHigherPriorityTaskWoken);
-
-		if(xHigherPriorityTaskWoken){
-			portYIELD();
-		}
-	}
-}
+//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+//	if (GPIO_Pin == GPIO_PIN_15) {
+//		portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+//
+//		xSemaphoreGiveFromISR(radioReady, &xHigherPriorityTaskWoken);
+//
+//		if(xHigherPriorityTaskWoken){
+//			portYIELD();
+//		}
+//	}
+//}
+#endif

@@ -32,16 +32,16 @@
 
 typedef enum{
 	#ifdef LED1_PIN
-		LED_1,
+		LED1,
 	#endif
 	#ifdef LED2_PIN
-		LED_2,
+		LED2,
 	#endif
 	#ifdef LED3_PIN
-		LED_3,
+		LED3,
 	#endif
 	#ifdef LED4_PIN
-		LED_4,
+		LED4,
 	#endif
 	LED_COUNT
 }led_e;

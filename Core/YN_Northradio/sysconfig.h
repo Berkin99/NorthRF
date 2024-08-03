@@ -26,28 +26,32 @@
 #include "system.h"
 
 /// SYSTIME /////////////////////////////////////////////////
-#define SYSTIME				htim2
+#define SYSTIME               htim2
 /////////////////////////////////////////////////////////////
 
 /// SYSDEBUG ////////////////////////////////////////////////
-#define SYSDEBUG			huart1
+#define SYSDEBUG              huart1
 /////////////////////////////////////////////////////////////
 
 /// LED /////////////////////////////////////////////////////
-#define LED1_GPIO			LED_1_GPIO_Port
-#define LED1_PIN			LED_1_Pin
-#define LED2_GPIO			LED_2_GPIO_Port
-#define LED2_PIN			LED_2_Pin
+#define LED1_GPIO             LED_1_GPIO_Port
+#define LED1_PIN              LED_1_Pin
+#define LED2_GPIO             LED_2_GPIO_Port
+#define LED2_PIN              LED_2_Pin
 /////////////////////////////////////////////////////////////
 
 /// SPI /////////////////////////////////////////////////////
-#define RF24_SPI			hspi1
-#define RF24_CE_GPIO		NRF_CE_GPIO_Port
-#define RF24_CS_GPIO		NRF_CS_GPIO_Port
-#define RF24_IRQ_GPIO		NRF_IRQ_GPIO_Port
-#define RF24_CE				NRF_CE_Pin
-#define RF24_CS				NRF_CS_Pin
-#define RF24_IRQ			NRF_IRQ_Pin
+#define RF24_SPI              hspi1
+#define RF24_CE_GPIO          NRF_CE_GPIO_Port
+#define RF24_CS_GPIO          NRF_CS_GPIO_Port
+#define RF24_IRQ_GPIO         NRF_IRQ_GPIO_Port
+#define RF24_CE               NRF_CE_Pin
+#define RF24_CS               NRF_CS_Pin
+#define RF24_IRQ              NRF_IRQ_Pin
+/////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////
+#define NORTHROUTER
 /////////////////////////////////////////////////////////////
 
 #endif /* SYSCONFIG_H_ */

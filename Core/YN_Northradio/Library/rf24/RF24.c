@@ -537,3 +537,18 @@ uint8_t RF24_writeFast(const void* pBuffer, uint8_t length){
 	faststate = 0;
 	return 1;
 }
+
+void	RF24_setPALevel(uint8_t level, uint8_t lnaEnable){
+	uint8_t setup = 0;
+	uint8_t tmp;
+	RF24_readRegister(RF_SETUP, &tmp, 1);
+    setup  = tmp & (0xF8);
+    setup |= (((level > RF24_PA_MAX ? (RF24_PA_MAX) : level) << 1) + lnaEnable);
+    RF24_writeRegister(RF_SETUP, &setup, 1);
+}
+
+uint8_t RF24_getPALevel(void){
+	uint8_t setup;
+	RF24_readRegister(RF_SETUP, &setup, 1);
+    return (setup & (_BV(RF_PWR_LOW) | _BV(RF_PWR_HIGH))) >> 1;
+}

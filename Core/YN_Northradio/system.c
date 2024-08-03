@@ -52,19 +52,21 @@ void systemLaunch(void){
 }
 
 void systemTask(void* argv){
-
+	ledSet(LED1, 1);
 	serialPrint("[>] System start\n");
 
 	NTRPR_Init();
 
 	serialPrint("[>] System Ready\n \n");
+
+	while(1){
+		delay(1000);
+	}
 }
 
 void systemErrorCall(void){
 
-	ledSet(LED_2, 0);
 	while(1){
-		ledToggle(LED_1);
 		delay(1000);
 	}
 }
